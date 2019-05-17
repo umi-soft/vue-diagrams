@@ -7,8 +7,8 @@
         </rect>
         <svg x="0" y="0"
              @mousedown="mouseDown"
-             @mouseenter="mouseenter"
-             @mouseleave="mouseleave">
+             @mouseenter="mouseEnter"
+             @mouseleave="mouseLeave">
             <rect fill="#000000" x="7" y="17" rx="3" ry="3" class="node-dark-background"
                   :fill-opacity="titleFillOpacity"
                   :width="width-4" height="16"/>
@@ -92,11 +92,11 @@
                 )
             },
 
-            mouseenter() {
+            mouseEnter() {
                 this.titleFillOpacity = 0.5
             },
 
-            mouseleave() {
+            mouseLeave() {
                 this.titleFillOpacity = 0.25
             }
         }

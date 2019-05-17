@@ -1,5 +1,5 @@
-import generateId from '../utils'
-import ModelPort from './Port'
+import { generateId } from '../utils'
+import ModelPort from './ModelPort'
 
 /**
  * @class DiagramNode

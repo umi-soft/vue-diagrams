@@ -1,5 +1,5 @@
-import ModelNode from './Node'
-import ModelLink from './Link'
+import ModelNode from './ModelNode'
+import ModelLink from './ModelLink'
 
 class Model {
 
@@ -55,10 +55,9 @@ class Model {
      * 在两点之间增加一个连接线信息
      * @param {Integer} from，起始Port id
      * @param {Integer} to，结束Port id
-     * @param {Array}  points  Optional. Array of points to make the link represented as a segmented line
      */
-    addLink(from, to, points = []) {
-        this.links.push(new ModelLink(from, to, points))
+    addLink(from, to) {
+        this.links.push(new ModelLink(from, to))
     }
 
     /**
