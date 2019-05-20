@@ -3,9 +3,9 @@
        @mouseleave="mouseLeave"
        @mousedown="mouseDown($event, 0)">
         <path stroke-width="8" fill="none"
-              :d="curve"
-              :style="largeStrokeStyle"/>
-        <path style="stroke:rgb(0,0,0);" stroke-width="2" fill="none"
+              :stroke="stroke"
+              :d="curve"/>
+        <path stroke="rgb(0,0,0)" stroke-width="2" fill="none"
               :d="curve"/>
     </g>
 </template>
@@ -15,15 +15,15 @@
 
         data() {
             return {
-                largeStrokeStyle: 'stroke:rgba(255,0,0,0.0);'
+                stroke: 'rgba(255,0,0,0.0)'
             }
         },
         methods: {
             mouseEnter() {
-                this.largeStrokeStyle = 'stroke:rgba(255,0,0,0.5);'
+                this.stroke = 'rgba(255,0,0,0.5)'
             },
             mouseLeave() {
-                this.largeStrokeStyle = 'stroke:rgba(255,0,0,0.0);'
+                this.stroke = 'rgba(255,0,0,0.0)'
             },
             mouseDown(pos, segmentIndex) {
                 // this.$emit('onStartDrag', {

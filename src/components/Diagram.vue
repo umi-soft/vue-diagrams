@@ -10,7 +10,7 @@
                 :beforePan="beforePan">
 
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet"
-             ref="dragramRoot" class="svg-content"
+             class="svg-content"
              :id="diagramRoot"
              :viewBox="'0 0 ' + width + ' ' + height"
              :width="width"
@@ -33,26 +33,26 @@
                   @mousedown="mouseDown"/>
 
             <g x="50" y="50"
-               ref="viewPort"
                :id="viewportId">
-                <DiagramLink :ref="'link-' + index"
+                <DiagramLink v-for="(link, index) in links"
+                             :key="link.id"
+                             :ref="'link-' + index"
+                             :id="link.id"
                              :positionFrom="link.positionFrom"
                              :positionTo="link.positionTo"
-                             :id="link.id"
                              :index="index"
-                             :key="link.id"
-                             v-for="(link, index) in model.links"
                              @onStartDrag="startDragLinkPoint"/>
 
-                <line style="stroke:rgb(255,0,0);" stroke-width="2"
+                <line stroke="rgb(255,0,0)" stroke-width="2"
+                      v-if="newLink"
                       :x1="getPortHandlePosition(newLink.startPortId).x"
                       :y1="getPortHandlePosition(newLink.startPortId).y"
-                      :x2="convertXYtoViewPort(mouseX, 0).x"
-                      :y2="convertXYtoViewPort(0, mouseY).y"
-                      v-if="newLink"/>
-
-                <DiagramNode v-for="(node, nodeIndex) in model.nodes"
+                      :x2="mouseX"
+                      :y2="mouseY"/>
+                <DiagramNode v-for="(node, nodeIndex) in nodes"
+                             :key="node.id"
                              :ref="'node-' + nodeIndex"
+                             :index="nodeIndex"
                              :title="node.title"
                              :x="node.x"
                              :y="node.y"
@@ -62,12 +62,11 @@
                              :deletable="node.deletable"
                              :ports="node.ports"
                              :selected="selectedItem.type === 'nodes' && selectedItem.index === nodeIndex"
-                             :index="nodeIndex"
-                             :key="node.id"
                              @onStartDrag="startDragItem"
-                             @delete="model.deleteNode(node)">
-
+                             @onDelete="deleteHandler">
+                    <text x="20" y="15" fill="red">{{'(' + node.x + ',' + node.x + ')'}}</text>
                     <DiagramPort v-for="(port, portIndex) in node.ports"
+                                 :key="port.id"
                                  :ref="'port-' + port.id"
                                  :id="port.id"
                                  :nodeIndex="nodeIndex"
@@ -75,9 +74,9 @@
                                  :nodeWidth="node.width"
                                  :type="port.type"
                                  :name="port.name"
-                                 :key="port.id"
                                  @onStartDragNewLink="startDragNewLink"
                                  @mouseUpPort="mouseUpPort"/>
+
                 </DiagramNode>
             </g>
 
@@ -92,7 +91,6 @@
     import DiagramLink from './DiagramLink'
     import DiagramPort from './DiagramPort'
 
-    import { getAbsoluteXY, snapToGrip } from '../utils'
     import ModelLink from '../model/ModelLink'
 
     export default {
@@ -110,10 +108,17 @@
                 default: 1
             }
         },
-
+        components: {
+            SvgPanZoom,
+            DiagramNode,
+            DiagramLink,
+            DiagramPort
+        },
         data() {
-            this.updateLinksPositions()
             return {
+                links: [],
+                nodes: [],
+
                 diagramRoot: 'diagramRoot',
                 viewportId: 'viewportId',
                 zoomEnabled: true,
@@ -123,31 +128,36 @@
                 draggedItem: undefined,
                 newLink: undefined,
 
-                initialDragX: 0,
-                initialDragY: 0,
+                mouseStartX: 0,
+                mouseStartY: 0,
                 mouseX: 0,
                 mouseY: 0
             }
         },
-
-        components: {
-            SvgPanZoom,
-            DiagramNode,
-            DiagramLink,
-            DiagramPort
+        mounted() {
+            this.initData()
         },
-
         methods: {
+            initData() {
+                this.selectedItem = {}
+                this.draggedItem = undefined
+                this.newLink = undefined
 
+                this.links = JSON.parse(JSON.stringify(this.model.links))
+                this.nodes = JSON.parse(JSON.stringify(this.model.nodes))
+
+                this.$nextTick(() => {
+                    this.updateLinksPositions()
+                })
+            },
             // 将坐标(x,y)转换为预设ViewPort内部坐标
             convertXYtoViewPort(x, y) {
                 const root = document.getElementById(this.diagramRoot)
                 const rec = document.getElementById(this.viewportId)
                 const point = root.createSVGPoint()
-                const rootPosition = getAbsoluteXY(root)
-                point.x = x - rootPosition.x
-                point.y = y - rootPosition.y
-                const ctm = rec.getCTM().inverse()
+                point.x = x
+                point.y = y
+                const ctm = rec.getScreenCTM().inverse()
                 return point.matrixTransform(ctm)
             },
 
@@ -161,18 +171,12 @@
 
             // 更新Link两端连接点form、to对应的坐标信息
             updateLinksPositions() {
-                var links = []
-                if (this.model) links = this.model.links
-                this.$nextTick(() => {
-                    setTimeout(() => {
-                        for (let i = 0; i < links.length; i++) {
-                            let coords = this.getPortHandlePosition(links[i].from)
-                            links[i].positionFrom = { x: coords.x, y: coords.y }
-                            coords = this.getPortHandlePosition(links[i].to)
-                            links[i].positionTo = { x: coords.x, y: coords.y }
-                        }
-                    }, 100)
-                })
+                for (let i = 0; i < this.links.length; i++) {
+                    let coords = this.getPortHandlePosition(this.links[i].from)
+                    this.links[i].positionFrom = { x: coords.x, y: coords.y }
+                    coords = this.getPortHandlePosition(this.links[i].to)
+                    this.links[i].positionTo = { x: coords.x, y: coords.y }
+                }
             },
 
             //开始绘制新的连接线
@@ -185,7 +189,13 @@
             getPortHandlePosition(portId) {
                 let x = 0, y = 0
                 const port = this.$refs["port-" + portId][0]
+                if (!port) {
+                    return { x, y }
+                }
                 const node = this.$refs["node-" + port.nodeIndex][0]
+                if (!node) {
+                    return { x, y }
+                }
                 if (port.type === "in") {
                     x = node.x + 10
                     y = node.y + port.y + 64
@@ -198,15 +208,18 @@
 
             mouseMove(pos) {
                 if (!this.draggedItem) return
-                this.mouseX = pos.x
-                this.mouseY = pos.y
                 const index = this.draggedItem.index
                 const type = this.draggedItem.type
-                const position = this.convertXYtoViewPort(this.mouseX, this.mouseY)
-                position.x = snapToGrip(position.x, this.gridSnap) - this.gridSnap / 2
-                position.y = snapToGrip(position.y, this.gridSnap)
-                this.model[type][index].x = position.x - 30
-                this.model[type][index].y = position.y - 30
+                const position = this.convertXYtoViewPort(pos.clientX, pos.clientY)
+                this.mouseX = position.x
+                this.mouseY = position.y
+                let items = this.links
+                if (type === 'nodes') {
+                    items = this.nodes
+                }
+                items[index].x = this.draggedItem.x + this.mouseX - this.mouseStartX
+                items[index].y = this.draggedItem.y + this.mouseY - this.mouseStartY
+
                 this.updateLinksPositions()
             },
 
@@ -216,15 +229,14 @@
             },
 
             mouseUpPort(portId) {
-                var links = this.model.links
                 if (this.draggedItem && this.draggedItem.type === 'points') {
                     var pointIndex = this.draggedItem.pointIndex
                     var linkIndex = this.draggedItem.linkIndex
                     if (this.$refs['port-' + portId][0].type === 'in') {
-                        var l = links[linkIndex].points.length
-                        links[linkIndex].points.splice(pointIndex, l - this.draggedItem.pointIndex)
+                        var l = this.links[linkIndex].points.length
+                        this.links[linkIndex].points.splice(pointIndex, l - this.draggedItem.pointIndex)
                     } else {
-                        links[linkIndex].points.splice(0, pointIndex + 1)
+                        this.links[linkIndex].points.splice(0, pointIndex + 1)
                     }
                     this.updateLinksPositions()
                 }
@@ -237,12 +249,10 @@
                     var port2 = this.$refs["port-" + port2Id][0]
 
                     if (port1.type === "in" && port2.type === "out") {
-                        links.push(new ModelLink(port2.id, port1.id))
+                        this.links.push(new ModelLink(port2.id, port1.id))
                     } else if (port2.type === "in" && port1.type === "out") {
-                        links.push(new ModelLink(port1.id, port2.id))
+                        this.links.push(new ModelLink(port1.id, port2.id))
                     }
-
-                    this.model.links = links
                     this.updateLinksPositions()
                 }
             },
@@ -251,17 +261,34 @@
                 this.draggedItem = pointInfo
             },
 
-            startDragItem(item, x, y) {
+            startDragItem(item, clientX, clientY) {
                 this.panEnabled = false
                 this.draggedItem = item
                 this.selectedItem = item
-                this.initialDragX = x
-                this.initialDragY = y
+                const mousePosition = this.convertXYtoViewPort(clientX, clientY)
+                this.mouseStartX = mousePosition.x
+                this.mouseStartY = mousePosition.y
+            },
+            deleteHandler(type, index) {
+                if (type === 'nodes') {
+                    this.nodes[index].ports.forEach(port => {
+                        for(let i=0; i<this.links.length; i++) {
+                            if (port.id === this.links[i].from || port.id === this.links[i].to) {
+                                this.links.splice(i, 1)
+                                i --
+                            }
+                        }
+                    })
+                    this.nodes.splice(index, 1)
+                }
             }
         },
 
         watch: {
             'model.links': function() {
+                this.updateLinksPositions()
+            },
+            'model.nodes': function() {
                 this.updateLinksPositions()
             }
         }
