@@ -7,12 +7,8 @@
                   :fill="fill"
                   @mouseenter="mouseEnter"
                   @mouseleave="mouseLeave"
-                  @mousedown="startDragNewLink"
+                  @mousedown="mouseDown"
                   @mouseup="mouseUp"/>
-            <text x="12" y="9"
-                  font-size="8pt" fill="#000000">
-                {{name}}
-            </text>
         </svg>
         <svg v-else
              :y="y + 55">
@@ -22,19 +18,14 @@
                   :y="0"
                   @mouseenter="mouseEnter"
                   @mouseleave="mouseLeave"
-                  @mousedown="startDragNewLink"
+                  @mousedown="mouseDown"
                   @mouseup="mouseUp"/>
-            <text text-anchor="end" font-size="8pt" fill="#000000"
-                  :x="nodeWidth - 6"
-                  :y="9">
-                {{name}}
-            </text>
         </svg>
     </g>
 </template>
 <script>
     export default {
-        props: ['id', 'y', 'type', 'name', 'nodeWidth', 'nodeIndex'],
+        props: ['id', 'y', 'type', 'nodeWidth', 'nodeIndex'],
         data() {
             return {
                 fill: '#444444'
@@ -48,9 +39,9 @@
                 this.fill = '#444444'
             },
             mouseUp() {
-                this.$emit('mouseUpPort', this.id)
+                this.$emit('mouseUp', this.id)
             },
-            startDragNewLink() {
+            mouseDown() {
                 this.$emit('onStartDragNewLink', this.id)
             }
         }

@@ -4,8 +4,7 @@
               :fill="color"
               :stroke-width="selected ? 2 : 0"
               :width="width"
-              :height="height">
-        </rect>
+              :height="height"/>
         <svg x="0" y="0"
              @mousedown="mouseDown"
              @mouseenter="mouseEnter"
@@ -15,7 +14,7 @@
                   class="node-dark-background"
                   height="16"
                   :fill-opacity="titleFillOpacity"
-                  :width="width-4"/>
+                  :width="width - 4"/>
             <text font-size="14" font-weight="bold" fill="#000000"
                   :x="10"
                   :y="30">
@@ -42,7 +41,7 @@
               class="node-light-background"
               :width="width-4"
               :height="height - 22"/>
-        <slot></slot>
+        <slot/>
     </svg>
 </template>
 <script>

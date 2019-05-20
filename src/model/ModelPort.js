@@ -1,10 +1,10 @@
 import { generateId } from '../utils'
 
 class ModelPort {
-    constructor(type, name) {
+    constructor(type) {
         this.id = generateId()
+
         this.type = type
-        this.name = name
     }
 }
 

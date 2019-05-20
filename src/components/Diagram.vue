@@ -9,10 +9,10 @@
                 :preventMouseEventsDefault="false"
                 :beforePan="beforePan">
 
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet"
-             class="svg-content"
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+             preserveAspectRatio="xMinYMin meet"
+             viewBox="0 0 1280 960"
              :id="diagramRoot"
-             :viewBox="'0 0 ' + width + ' ' + height"
              :width="width"
              :height="height"
              @mousemove="mouseMove"
@@ -22,13 +22,17 @@
                 <pattern id="smallGrid" width="16" height="16" patternUnits="userSpaceOnUse">
                     <path d="M 16 0 L 0 0 0 16" fill="none" stroke="gray" stroke-width="0.5"/>
                 </pattern>
-                <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <rect width="80" height="80" fill="url(#smallGrid)"/>
-                    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1"/>
+                <pattern id="grid" width="160" height="160" patternUnits="userSpaceOnUse">
+                    <rect width="160" height="160" fill="url(#smallGrid)"/>
+                    <path d="M 160 0 L 0 0 0 160" fill="none" stroke="gray" stroke-width="1"/>
+                </pattern>
+                <pattern id="page" width="960" height="1280" patternUnits="userSpaceOnUse">
+                    <rect width="960" height="1280" fill="url(#grid)"/>
+                    <path d="M 960 0 L 0 0 0 1280" fill="none" stroke="black" stroke-width="2"/>
                 </pattern>
             </defs>
 
-            <rect x="-5000px" y="-5000px" width="10000px" height="10000px" fill="url(#grid)"
+            <rect x="-9600" y="-12800" width="19200" height="25600" fill="url(#page)"
                   ref="grid" class="svg-pan-zoom-viewport"
                   @mousedown="mouseDown"/>
 
@@ -64,7 +68,6 @@
                              :selected="selectedItem.type === 'nodes' && selectedItem.index === nodeIndex"
                              @onStartDrag="startDragItem"
                              @onDelete="deleteHandler">
-                    <text x="20" y="15" fill="red">{{'(' + node.x + ',' + node.x + ')'}}</text>
                     <DiagramPort v-for="(port, portIndex) in node.ports"
                                  :key="port.id"
                                  :ref="'port-' + port.id"
@@ -73,9 +76,8 @@
                                  :y="portIndex * 20"
                                  :nodeWidth="node.width"
                                  :type="port.type"
-                                 :name="port.name"
                                  @onStartDragNewLink="startDragNewLink"
-                                 @mouseUpPort="mouseUpPort"/>
+                                 @mouseUp="mouseUpPort"/>
 
                 </DiagramNode>
             </g>
@@ -92,6 +94,7 @@
     import DiagramPort from './DiagramPort'
 
     import ModelLink from '../model/ModelLink'
+    import { generateId } from '../utils'
 
     export default {
         props: {
@@ -103,9 +106,6 @@
             },
             height: {
                 default: 500
-            },
-            gridSnap: {
-                default: 1
             }
         },
         components: {
@@ -119,8 +119,8 @@
                 links: [],
                 nodes: [],
 
-                diagramRoot: 'diagramRoot',
-                viewportId: 'viewportId',
+                diagramRoot: 'diagramRoot-' + generateId(),
+                viewportId: 'viewportId' + generateId(),
                 zoomEnabled: true,
                 panEnabled: true,
 
@@ -206,11 +206,11 @@
                 return { x, y }
             },
 
-            mouseMove(pos) {
+            mouseMove(event) {
                 if (!this.draggedItem) return
                 const index = this.draggedItem.index
                 const type = this.draggedItem.type
-                const position = this.convertXYtoViewPort(pos.clientX, pos.clientY)
+                const position = this.convertXYtoViewPort(event.clientX, event.clientY)
                 this.mouseX = position.x
                 this.mouseY = position.y
                 let items = this.links
@@ -296,8 +296,9 @@
 </script>
 
 <style scoped>
-  svg {
-    user-select: none;
-    font-family: Helvetica;
-  }
+    svg {
+        user-select: none;
+        font-family: Helvetica;
+        cursor: pointer;
+    }
 </style>
