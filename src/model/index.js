@@ -1,5 +1,4 @@
-import ModelNode from './ModelNode'
-import ModelLink from './ModelLink'
+import Link from './ModelLink'
 
 class Model {
 
@@ -10,22 +9,16 @@ class Model {
 
     /**
      * 增加节点
-     * @param {String} title，节点主题
-     * @param {Integer} x，x坐标
-     * @param {Integer} y，y坐标
-     * @param {Integer} width，宽度
-     * @param {Integer} height，高度
-     * @return {Node}，返回新创建的节点
+     * @param {Node}，node
      */
-    addNode(title, x, y, width, height) {
-        const node = new ModelNode(title, x, y, width, height)
+    addNode(node) {
         this.nodes.push(node)
         return node
     }
 
     /**
      * 删除节点
-     * @param {ModelNode}，node，根据节点对象进行删除，并删除相关联的连接线信息
+     * @param {Node}，node，根据节点对象进行删除，并删除相关联的连接线信息
      */
     deleteNode(node) {
         const index = this.nodes.indexOf(node)
@@ -57,7 +50,7 @@ class Model {
      * @param {Integer} to，结束Port id
      */
     addLink(from, to) {
-        this.links.push(new ModelLink(from, to))
+        this.links.push(new Link(from, to))
     }
 
     /**
