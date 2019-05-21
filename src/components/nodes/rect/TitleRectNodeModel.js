@@ -35,7 +35,7 @@ class ModelNode {
     }
 
     getCenterPort() {
-
+        return this.ports(0)
     }
 
     getTopPort() {

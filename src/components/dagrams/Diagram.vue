@@ -92,7 +92,7 @@
     import DiagramPort from '@/components/common/DiagramPort'
     import DiagramLink from '@/components/common/DiagramLink'
 
-    import TitleRectNode from '../nodes/rect/TitleRectNode'
+    import TitleRectNode from '@/components/nodes/rect/TitleRectNode'
     import diagram from '@/components/common/mixins/diagram'
 
     export default {

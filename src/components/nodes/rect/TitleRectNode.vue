@@ -12,7 +12,7 @@
                   :x="rectPaddingL" :y="rectPaddingL"
                   :fill-opacity="fillOpacityState"
                   :height="height - 2 * rectPaddingL"
-                  :width="width - 2 * rectPaddingL" />
+                  :width="width - 2 * rectPaddingL"/>
             <svg x="8" y="8"
                  :height="height - 3 * rectPaddingL"
                  :width="width - 3 * rectPaddingL">
@@ -26,7 +26,6 @@
     </svg>
 </template>
 <script>
-
     export default {
         props: {
             id: {
@@ -79,7 +78,7 @@
                 this.$emit('onDelete', 'nodes', this.index)
             },
 
-            mouseDown (event) {
+            mouseDown(event) {
                 this.$emit(
                     'onStartDrag',
                     {

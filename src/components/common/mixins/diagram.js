@@ -51,7 +51,7 @@ export default {
             this.nodes = JSON.parse(JSON.stringify(this.model.nodes))
 
             this.$nextTick(() => {
-                this.updateLinksPositions()
+                // this.updateLinksPositions()
             })
         },
 
