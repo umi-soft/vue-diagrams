@@ -4,7 +4,7 @@
        @mouseenter="mouseEnter"
        @mouseleave="mouseLeave">
 
-        <rect class="node" :x="model.x" :y="model.y" :rx="model.rx" :ry="model.ry" :width="model.width" :height="model.height"/>
+        <path class="node" :d="d"/>
 
         <template v-for="(port, index) in ports">
             <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
@@ -15,15 +15,15 @@
 </template>
 
 <script>
-    import TitleRectNodeModel from './TitleRectNodeModel'
+    import TitleRectCircleNodeModel from './TitleRectCircleNodeModel'
 
     export default {
         name: 'TitleRectNode',
         props: {
             node: {
                 require: true,
-                type: TitleRectNodeModel,
-                default: new TitleRectNodeModel()
+                type: TitleRectCircleNodeModel,
+                default: new TitleRectCircleNodeModel()
             },
             dragItem: {
                 require: false,
@@ -42,8 +42,6 @@
                     title: this.node.title,
                     x: this.node.x,
                     y: this.node.y,
-                    rx: this.node.rx,
-                    ry: this.node.ry,
                     width: this.node.width,
                     height: this.node.height
                 },
@@ -133,7 +131,7 @@
             portLeftMiddle() {
                 return {
                     id: this.node.id + '/portLeftMiddle',
-                    cx: this.model.x,
+                    cx: this.model.x - this.model.height / 2,
                     cy: this.model.y + this.model.height / 2,
                     r: 5
                 }
@@ -141,7 +139,7 @@
             portRightMiddle() {
                 return {
                     id: this.node.id + '/portRightMiddle',
-                    cx: this.model.x + this.model.width,
+                    cx: this.model.x + this.model.width + this.model.height / 2,
                     cy: this.model.y + this.model.height / 2,
                     r: 5
                 }
@@ -157,9 +155,16 @@
             ports() {
                 return [
                     this.portTopLeft, this.portTopMiddle, this.portTopRight,
-                    this.portBottomLeft, this.portBottomMiddle,  this.portBottomRight,
+                    this.portBottomLeft, this.portBottomMiddle, this.portBottomRight,
                     this.portLeftMiddle, this.portRightMiddle, this.portCenter
                 ]
+            },
+            d() {
+                return "M" + this.portTopLeft.cx + "," + this.portTopLeft.cy
+                    + " L" + this.portTopRight.cx + "," + this.portTopRight.cy
+                    + "A" + this.model.height/2 + "," + this.model.height/2 + " 0 1,1 " + this.portBottomRight.cx + "," + this.portBottomRight.cy
+                    + " L" + this.portBottomLeft.cx + "," + this.portBottomLeft.cy
+                    + "A" + this.model.height/2 + "," + this.model.height/2 + " 0 1,1 " + this.portTopLeft.cx + "," + this.portTopLeft.cy
             }
         }
     }

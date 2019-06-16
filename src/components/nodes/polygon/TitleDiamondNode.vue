@@ -3,8 +3,7 @@
        @mouseup.stop="mouseUpNode"
        @mouseenter="mouseEnter"
        @mouseleave="mouseLeave">
-
-        <rect class="node" :x="model.x" :y="model.y" :rx="model.rx" :ry="model.ry" :width="model.width" :height="model.height"/>
+        <polygon class="node" :points="points"/>
 
         <template v-for="(port, index) in ports">
             <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
@@ -15,15 +14,15 @@
 </template>
 
 <script>
-    import TitleRectNodeModel from './TitleRectNodeModel'
+    import TitleDiamondNodeModel from './TitleDiamondNodeModel'
 
     export default {
-        name: 'TitleRectNode',
+        name: 'TitleDiamondNode',
         props: {
             node: {
                 require: true,
-                type: TitleRectNodeModel,
-                default: new TitleRectNodeModel()
+                type: TitleDiamondNodeModel,
+                default: new TitleDiamondNodeModel()
             },
             dragItem: {
                 require: false,
@@ -42,8 +41,6 @@
                     title: this.node.title,
                     x: this.node.x,
                     y: this.node.y,
-                    rx: this.node.rx,
-                    ry: this.node.ry,
                     width: this.node.width,
                     height: this.node.height
                 },
@@ -82,65 +79,33 @@
             },
         },
         computed: {
-            portTopLeft() {
+            portTop() {
                 return {
-                    id: this.node.id + '/portTopLeft',
-                    cx: this.model.x,
-                    cy: this.model.y,
-                    r: 5
-                }
-            },
-            portTopMiddle() {
-                return {
-                    id: this.node.id + '/portTopMiddle',
+                    id: this.node.id + '/portTop',
                     cx: this.model.x + this.model.width / 2,
                     cy: this.model.y,
                     r: 5
                 }
             },
-            portTopRight() {
+            portBottom() {
                 return {
-                    id: this.node.id + '/portTopRight',
-                    cx: this.model.x + this.model.width,
-                    cy: this.model.y,
-                    r: 5
-                }
-            },
-            portBottomLeft() {
-                return {
-                    id: this.node.id + '/portBottomLeft',
-                    cx: this.model.x,
-                    cy: this.model.y + this.model.height,
-                    r: 5
-                }
-            },
-            portBottomMiddle() {
-                return {
-                    id: this.node.id + '/portBottomMiddle',
+                    id: this.node.id + '/portBottom',
                     cx: this.model.x + this.model.width / 2,
                     cy: this.model.y + this.model.height,
                     r: 5
                 }
             },
-            portBottomRight() {
+            portLeft() {
                 return {
-                    id: this.node.id + '/portBottomRight',
-                    cx: this.model.x + this.model.width,
-                    cy: this.model.y + this.model.height,
-                    r: 5
-                }
-            },
-            portLeftMiddle() {
-                return {
-                    id: this.node.id + '/portLeftMiddle',
+                    id: this.node.id + '/portLeft',
                     cx: this.model.x,
                     cy: this.model.y + this.model.height / 2,
                     r: 5
                 }
             },
-            portRightMiddle() {
+            portRight() {
                 return {
-                    id: this.node.id + '/portRightMiddle',
+                    id: this.node.id + '/portRight',
                     cx: this.model.x + this.model.width,
                     cy: this.model.y + this.model.height / 2,
                     r: 5
@@ -155,11 +120,10 @@
                 }
             },
             ports() {
-                return [
-                    this.portTopLeft, this.portTopMiddle, this.portTopRight,
-                    this.portBottomLeft, this.portBottomMiddle,  this.portBottomRight,
-                    this.portLeftMiddle, this.portRightMiddle, this.portCenter
-                ]
+                return [this.portTop, this.portBottom, this.portLeft, this.portRight, this.portCenter]
+            },
+            points() {
+                return "" + this.portTop.cx + "," + this.portTop.cy + " " + this.portRight.cx + "," + this.portRight.cy + " " + this.portBottom.cx + "," + this.portBottom.cy + " " + this.portLeft.cx + "," + this.portLeft.cy
             }
         }
     }
