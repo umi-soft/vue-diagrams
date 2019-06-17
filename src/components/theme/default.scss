@@ -16,7 +16,13 @@
 .line {
   stroke: #b3d8ff;
   stroke-width: 2px;
+
+  &.selected {
+    fill: #409EFF;
+    stroke-width: 3px;
+  }
 }
+
 .marker {
   fill: #409EFF;
 }

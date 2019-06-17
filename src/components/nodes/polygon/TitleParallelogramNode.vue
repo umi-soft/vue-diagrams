@@ -15,9 +15,11 @@
 
 <script>
     import TitleParallelogramNodeModel from './TitleParallelogramNodeModel'
+    import common from '../common'
 
     export default {
         name: 'TitleParallelogramNode',
+        mixins: [ common ],
         props: {
             node: {
                 require: true,
@@ -48,35 +50,10 @@
             }
         },
         methods: {
-            mouseDownNode(event) {
-                this.$emit('onStartDrag', event, {
-                    id: this.node.id,
-                    type: 'node'
-                })
-            },
-            mouseUpNode() {
-                this.$emit('onEndDragNode', this.model)
-            },
             moving(mouseOffsetX = 0, mouseOffsetY = 0) {
                 this.model.x = this.node.x + mouseOffsetX
                 this.model.y = this.node.y + mouseOffsetY
-            },
-            mouseDownPort(event, index) {
-                const port = Object.assign({}, this.ports[index])
-                port.type = 'link'
-                this.$emit('onStartDrag', event, port)
-            },
-            mouseUpPort(index) {
-                const port = Object.assign({}, this.ports[index])
-                if (!this.dragItem || this.dragItem.type !== 'link' || this.dragItem.id === port.id) return
-                this.$emit('onEndDragLink', port)
-            },
-            mouseEnter() {
-                this.hover = true
-            },
-            mouseLeave() {
-                this.hover = false
-            },
+            }
         },
         computed: {
             offset() {
