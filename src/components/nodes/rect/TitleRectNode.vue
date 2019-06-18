@@ -4,7 +4,7 @@
        @mouseenter="mouseEnter"
        @mouseleave="mouseLeave">
 
-        <rect class="node" :x="model.x" :y="model.y" :rx="model.rx" :ry="model.ry" :width="model.width" :height="model.height"/>
+        <rect :class="['node', { 'selected': isSelected }]" :x="model.x" :y="model.y" :rx="model.rx" :ry="model.ry" :width="model.width" :height="model.height"/>
 
         <template v-for="(port, index) in ports">
             <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>

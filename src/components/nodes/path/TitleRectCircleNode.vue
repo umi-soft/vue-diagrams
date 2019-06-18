@@ -4,7 +4,7 @@
        @mouseenter="mouseEnter"
        @mouseleave="mouseLeave">
 
-        <path class="node" :d="d"/>
+        <path :class="['node', { 'selected': isSelected }]" :d="d"/>
 
         <template v-for="(port, index) in ports">
             <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>

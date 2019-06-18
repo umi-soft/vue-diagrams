@@ -1,6 +1,7 @@
 .node {
   fill: #b3d8ff;
-  &:hover {
+
+  &:hover, &.selected {
     stroke: #409EFF;
   }
 }

@@ -3,7 +3,7 @@
        @mouseup.stop="mouseUpNode"
        @mouseenter="mouseEnter"
        @mouseleave="mouseLeave">
-        <circle class="node" :cx="model.cx" :cy="model.cy" :r="model.r"/>
+        <circle :class="['node', { 'selected': isSelected }]" :cx="model.cx" :cy="model.cy" :r="model.r"/>
 
         <template v-for="(port, index) in ports">
             <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
