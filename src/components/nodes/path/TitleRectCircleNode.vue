@@ -7,10 +7,12 @@
         <path :class="['node', { 'selected': isSelected }]" :d="d"/>
 
         <template v-for="(port, index) in ports">
-            <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
+            <circle class="port" v-show="hover" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
         </template>
 
         <text class="text" v-show="!(hover || isSelected)" :x="portCenter.cx" :y="portCenter.cy">{{ model.title }}</text>
+
+        <resize-rect v-if="isSelected" :model="resizeModel" @onStartResize="startResize" />
     </g>
 </template>
 
@@ -54,6 +56,43 @@
             moving(mouseOffsetX = 0, mouseOffsetY = 0) {
                 this.model.x = this.node.x + mouseOffsetX
                 this.model.y = this.node.y + mouseOffsetY
+            },
+            resizing(mouseOffsetX = 0, mouseOffsetY = 0) {
+                if (this.dragItem.direction === 'top-left') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.width = this.node.width - mouseOffsetX
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'top-middle') {
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'top-right') {
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.width = this.node.width + mouseOffsetX
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-left') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.width = this.node.width - mouseOffsetX
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-middle') {
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-right') {
+                    this.model.width = this.node.width + mouseOffsetX
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'left-middle') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.width = this.node.width - mouseOffsetX
+
+                } else if (this.dragItem.direction === 'right-middle') {
+                    this.model.width = this.node.width + mouseOffsetX
+
+                }
             }
         },
         computed: {
@@ -142,6 +181,14 @@
                     + "A" + this.model.height/2 + "," + this.model.height/2 + " 0 1,1 " + this.portBottomRight.cx + "," + this.portBottomRight.cy
                     + " L" + this.portBottomLeft.cx + "," + this.portBottomLeft.cy
                     + "A" + this.model.height/2 + "," + this.model.height/2 + " 0 1,1 " + this.portTopLeft.cx + "," + this.portTopLeft.cy
+            },
+            resizeModel() {
+                return {
+                    x: this.portLeftMiddle.cx  - 20,
+                    y: this.portTopLeft.cy - 20,
+                    width: this.model.width + this.model.height + 20 * 2,
+                    height: this.model.height + 20 * 2
+                }
             }
         }
     }

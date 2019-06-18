@@ -1,4 +1,6 @@
+import ResizeRect from './ResizeRect'
 export default {
+    components: { ResizeRect },
     methods: {
         mouseDownNode(event) {
             this.$emit('onStartDrag', event, {
@@ -35,11 +37,18 @@ export default {
                 this.$emit('onEndDragPort', port)
             }
         },
+        startResize(event, direction) {
+            const drag = Object.assign({
+                id: this.node.id,
+                type: 'resize'
+            }, direction)
+            this.$emit('onStartDrag', event, drag)
+        },
         mouseEnter() {
             this.hover = true
         },
         mouseLeave() {
             this.hover = false
-        }
+        },
     }
 }

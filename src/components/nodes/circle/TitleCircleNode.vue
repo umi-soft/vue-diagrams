@@ -6,10 +6,12 @@
         <circle :class="['node', { 'selected': isSelected }]" :cx="model.cx" :cy="model.cy" :r="model.r"/>
 
         <template v-for="(port, index) in ports">
-            <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
+            <circle class="port" v-show="hover" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
         </template>
 
         <text class="text" v-show="!(hover || isSelected)" :x="portCenter.cx" :y="portCenter.cy">{{ model.title }}</text>
+
+        <resize-rect v-if="isSelected" :model="resizeModel" :enable-diagonal="false" @onStartResize="startResize" />
     </g>
 </template>
 
@@ -52,7 +54,19 @@
             moving(mouseOffsetX = 0, mouseOffsetY = 0) {
                 this.model.cx = this.node.cx + mouseOffsetX
                 this.model.cy = this.node.cy + mouseOffsetY
-            }
+            },
+            resizing(mouseOffsetX = 0, mouseOffsetY = 0) {
+                if (this.dragItem.direction === 'top-middle') {
+                    this.model.ry = this.node.ry - mouseOffsetY
+                } else if (this.dragItem.direction === 'bottom-middle') {
+                    this.model.ry = this.node.ry + mouseOffsetY
+                } else if (this.dragItem.direction === 'left-middle') {
+                    this.model.rx = this.node.rx - mouseOffsetX
+                } else if (this.dragItem.direction === 'right-middle') {
+                    this.model.rx = this.node.rx + mouseOffsetX
+                }
+            },
+
         },
         computed: {
             portLeft() {
@@ -97,6 +111,14 @@
             },
             ports() {
                 return [this.portLeft, this.portRight, this.portTop, this.portBottom, this.portCenter]
+            },
+            resizeModel() {
+                return {
+                    x: this.model.cx - this.model.r - 20,
+                    y: this.model.cy - this.model.r - 20,
+                    width: this.model.r * 2 + 20 * 2,
+                    height: this.model.r * 2 + 20 * 2
+                }
             }
         }
     }

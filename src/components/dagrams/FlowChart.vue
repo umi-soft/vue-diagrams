@@ -111,6 +111,12 @@
                     if ( !item ) return
                     item = item[0]
                     item.reDrawing(this.mouse.x - this.mouse.startX, this.mouse.y - this.mouse.startY)
+                } else if (this.dragItem.type === 'resize') {   // 缩放大小
+                    let item = this.$refs[this.dragItem.id]
+                    if ( !item ) return
+                    item = item[0]
+                    item.resizing(this.mouse.x - this.mouse.startX, this.mouse.y - this.mouse.startY)
+                    this.updateLinks()
                 }
             },
             onEndDragNode(endDragNode) {

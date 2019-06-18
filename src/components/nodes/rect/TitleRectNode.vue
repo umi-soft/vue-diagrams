@@ -7,10 +7,12 @@
         <rect :class="['node', { 'selected': isSelected }]" :x="model.x" :y="model.y" :rx="model.rx" :ry="model.ry" :width="model.width" :height="model.height"/>
 
         <template v-for="(port, index) in ports">
-            <circle class="port" v-show="hover || isSelected" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
+            <circle class="port" v-show="hover" :ref="port.id" :key="port.id" :cx="port.cx" :cy="port.cy" :r="port.r" @mousedown.stop="mouseDownPort($event, index)" @mouseup.stop="mouseUpPort(index)"/>
         </template>
 
         <text class="text" v-show="!(hover || isSelected)" :x="portCenter.cx" :y="portCenter.cy">{{ model.title }}</text>
+
+        <resize-rect v-if="isSelected" :model="resizeModel" @onStartResize="startResize" />
     </g>
 </template>
 
@@ -56,6 +58,43 @@
             moving(mouseOffsetX = 0, mouseOffsetY = 0) {
                 this.model.x = this.node.x + mouseOffsetX
                 this.model.y = this.node.y + mouseOffsetY
+            },
+            resizing(mouseOffsetX = 0, mouseOffsetY = 0) {
+                if (this.dragItem.direction === 'top-left') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.width = this.node.width - mouseOffsetX
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'top-middle') {
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'top-right') {
+                    this.model.y = this.node.y + mouseOffsetY
+                    this.model.width = this.node.width + mouseOffsetX
+                    this.model.height = this.node.height - mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-left') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.width = this.node.width - mouseOffsetX
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-middle') {
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'bottom-right') {
+                    this.model.width = this.node.width + mouseOffsetX
+                    this.model.height = this.node.height + mouseOffsetY
+
+                } else if (this.dragItem.direction === 'left-middle') {
+                    this.model.x = this.node.x + mouseOffsetX
+                    this.model.width = this.node.width - mouseOffsetX
+
+                } else if (this.dragItem.direction === 'right-middle') {
+                    this.model.width = this.node.width + mouseOffsetX
+
+                }
             }
         },
         computed: {
@@ -137,6 +176,14 @@
                     this.portBottomLeft, this.portBottomMiddle,  this.portBottomRight,
                     this.portLeftMiddle, this.portRightMiddle, this.portCenter
                 ]
+            },
+            resizeModel() {
+                return {
+                    x: this.model.x - 20,
+                    y: this.model.y - 20,
+                    width: this.model.width + 20 * 2,
+                    height: this.model.height + 20 * 2
+                }
             }
         }
     }
