@@ -1,7 +1,7 @@
 import { generateId } from '@/utils'
 
 class TitleRectNodeModel {
-    constructor(title = 'title', x = 400, y = 300, width = 200, height = 100, rx = 10, ry = 10) {
+    constructor(title = 'title', x = 400, y = 300, width = 100, height = 50, rx = 10, ry = 10) {
         this.id = generateId()
         this.type = 'TitleRectNode'
         this.title = title

@@ -61,7 +61,7 @@
         },
         data() {
             const nodes = []
-            nodes.push(new TitleCircleNodeModel('Circle', 100, 100, 50))
+            nodes.push(new TitleCircleNodeModel('Circle'))
             nodes.push(new TitleEllipseNodeModel('Ellipse'))
             nodes.push(new TitleRectNodeModel('Rect'))
             nodes.push(new TitleRectCircleNodeModel('RectCircle'))

@@ -1,7 +1,7 @@
 import { generateId } from '@/utils'
 
 class TitleCircleNodeModel {
-    constructor(title = 'title', cx = 100, cy = 100, r = 50) {
+    constructor(title = 'title', cx = 100, cy = 100, r = 25) {
         this.id = generateId()
         this.type = 'TitleCircleNode'
         this.title = title
