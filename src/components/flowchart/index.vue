@@ -30,15 +30,9 @@
 
 <script>
     import { generateId } from '@/utils'
-    import '@/components/nodes'
-    import '@/components/links'
-
-    import TitleCircleNodeModel from '@/components/nodes/circle/TitleCircleNodeModel'
-    import TitleEllipseNodeModel from '@/components/nodes/ellipse/TitleEllipseNodeModel'
-    import TitleRectNodeModel from '@/components/nodes/rect/TitleRectNodeModel'
-    import TitleRectCircleNodeModel from '@/components/nodes/path/TitleRectCircleNodeModel'
-    import TitleParallelogramNodeModel from '@/components/nodes/polygon/TitleParallelogramNodeModel'
-    import TitleDiamondNodeModel from '@/components/nodes/polygon/TitleDiamondNodeModel'
+    import './nodes'
+    import './links'
+    import Model from './nodes/model'
 
     export default {
         name: 'FlowChart',
@@ -57,19 +51,17 @@
                 require: false,
                 type: Number,
                 default: 960
+            },
+            model: {
+                require: true,
+                type: Object,
+                default: () => { return { nodes: [], links: [] } }
             }
         },
         data() {
-            const nodes = []
-            nodes.push(new TitleCircleNodeModel('Circle'))
-            nodes.push(new TitleEllipseNodeModel('Ellipse'))
-            nodes.push(new TitleRectNodeModel('Rect'))
-            nodes.push(new TitleRectCircleNodeModel('RectCircle'))
-            nodes.push(new TitleParallelogramNodeModel('Parallelogram'))
-            nodes.push(new TitleDiamondNodeModel('Diamond'))
             return {
-                nodes: nodes,
-                links: [],
+                nodes: this.model.nodes,
+                links: this.model.links,
                 tempLinkId: generateId(),
                 dragItem: null,
                 selectedItemId: null,
@@ -77,6 +69,14 @@
                     x: 0, y: 0, startX: 0, startY: 0
                 }
             }
+        },
+        mounted() {
+            this.nodes.push(new Model.TitleCircleNodeModel('Circle'))
+            this.nodes.push(new Model.TitleEllipseNodeModel('Ellipse'))
+            this.nodes.push(new Model.TitleRectNodeModel('Rect'))
+            this.nodes.push(new Model.TitleRectCircleNodeModel('RectCircle'))
+            this.nodes.push(new Model.TitleParallelogramNodeModel('Parallelogram'))
+            this.nodes.push(new Model.TitleDiamondNodeModel('Diamond'))
         },
         methods: {
             onStartDrag(event, dragItem) {
@@ -214,3 +214,6 @@
         }
     }
 </script>
+<style lang="scss">
+    @import './theme/default.scss';
+</style>

@@ -1,21 +1,20 @@
 <template>
-    <flow-chart />
+    <graph :model="model"/>
 </template>
 
 <script>
-    import FlowChart from '@/components/dagrams/FlowChart'
+    import FlowChart from '@/components/flowchart'
+    import Graph from '@/components/graph/dagre'
 
     export default {
-        components: { FlowChart },
+        components: { Graph, FlowChart },
         data() {
             return {
+                model: {
+                    nodes: [],
+                    links: []
+                }
             }
-        },
-        methods: {
-
         }
     }
 </script>
-<style lang="scss">
-    @import '@/components/theme/default.scss';
-</style>
