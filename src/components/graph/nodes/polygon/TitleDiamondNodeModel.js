@@ -10,7 +10,7 @@ class TitleDiamondNodeModel {
         this.width = width
         this.height = height
     }
-    getRect() {
+    getBoundingBox() {
         return {
             width: this.width,
             height: this.height

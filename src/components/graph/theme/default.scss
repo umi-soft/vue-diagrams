@@ -12,11 +12,25 @@
   dominant-baseline: middle;
 }
 
+@keyframes dash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .line {
   stroke: #b3d8ff;
   stroke-width: 2px;
-}
+  fill: none;
 
-.marker {
-  fill: #409EFF;
+  &:hover {
+    fill: none;
+    stroke: #409EFF;
+    stroke-width: 3px;
+    stroke-dasharray: 10,2;
+    animation: dash 1s linear infinite;
+  }
 }

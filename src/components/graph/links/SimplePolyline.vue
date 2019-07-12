@@ -1,6 +1,6 @@
 <template>
     <g>
-        <polyline class="line" fill="none" :points="link.points"/>
+        <polyline class="line" :points="link.points"/>
     </g>
 </template>
 

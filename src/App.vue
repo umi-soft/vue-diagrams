@@ -3,11 +3,11 @@
 </template>
 
 <script>
-    import FlowChart from '@/components/flowchart'
+    // import FlowChart from '@/components/flowchart'
     import Graph from '@/components/graph/dagre'
 
     export default {
-        components: { Graph, FlowChart },
+        components: { Graph },
         data() {
             return {
                 model: {

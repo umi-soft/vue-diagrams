@@ -10,7 +10,7 @@ class TitleEllipseNodeModel {
         this.rx = rx
         this.ry = ry
     }
-    getRect() {
+    getBoundingBox() {
         return {
             width: this.rx * 2,
             height: this.ry * 2

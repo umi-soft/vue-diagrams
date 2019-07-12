@@ -13,7 +13,7 @@ class TitleParallelogramNodeModel {
     offset() {
         return this.width / 5
     }
-    getRect() {
+    getBoundingBox() {
         return {
             width: this.width + this.offset(),
             height: this.height

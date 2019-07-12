@@ -27,6 +27,7 @@
     export default {
         name: 'Graph',
         mounted() {
+            this.nodes = []
             this.nodes.push(new Model.TitleCircleNodeModel('1'))
             this.nodes.push(new Model.TitleEllipseNodeModel('2'))
             this.nodes.push(new Model.TitleRectNodeModel('3'))
@@ -35,8 +36,13 @@
             this.nodes.push(new Model.TitleDiamondNodeModel('6'))
 
             const graph = new Dagre.graphlib.Graph()
-            graph.setGraph({ directed: false, multigraph: false, rankdir: 'BT' })
+            graph.setGraph({ directed: false, multigraph: false, rankdir: 'TB', align: 'DR', ranksep: 100, nodesep: 100, edgesep: 20, ranker: 'tight-tree' })
             graph.setDefaultEdgeLabel(function() {return {}})
+
+            graph.setEdge(this.nodes[1].id, this.nodes[2].id)
+            graph.setEdge(this.nodes[1].id, this.nodes[3].id)
+            graph.setEdge(this.nodes[1].id, this.nodes[4].id)
+            graph.setEdge(this.nodes[1].id, this.nodes[5].id)
 
             graph.setEdge(this.nodes[0].id, this.nodes[1].id)
             graph.setEdge(this.nodes[0].id, this.nodes[2].id)
@@ -44,12 +50,12 @@
             graph.setEdge(this.nodes[0].id, this.nodes[4].id)
             graph.setEdge(this.nodes[0].id, this.nodes[5].id)
 
-            this.nodes.forEach(node => graph.setNode(node.id, node.getRect()))
-            this.links.forEach(link => graph.setEdge(link.startPortId, link.endPortId))
+            this.nodes.forEach(node => graph.setNode(node.id, node.getBoundingBox()))
             Dagre.layout(graph)
             this.nodes.forEach(node => {
                 node.setPosition(graph.node(node.id))
             })
+            this.links = []
             graph.edges().forEach(edge => {
                 let points = null
                 graph.edge(edge).points.forEach(point => {

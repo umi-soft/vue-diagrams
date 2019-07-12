@@ -9,7 +9,7 @@ class TitleCircleNodeModel {
         this.cy = cy
         this.r = r
     }
-    getRect() {
+    getBoundingBox() {
         return {
             width: this.r * 2,
             height: this.r * 2

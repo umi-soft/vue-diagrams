@@ -20,10 +20,11 @@
 .line {
   stroke: #b3d8ff;
   stroke-width: 2px;
+  fill: none;
 
-  &.selected {
-    fill: #409EFF;
-    stroke-width: 3px;
+  &:hover, &.selected {
+    fill: none;
+    stroke: #00c0ff;
   }
 }
 
